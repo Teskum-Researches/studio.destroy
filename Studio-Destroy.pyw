@@ -265,7 +265,7 @@ bottom_frame.pack(side="bottom", fill="x")
 # Копирайт внизу справа
 copyright_label = tk.Label(
     bottom_frame,
-    text="© 2025 Quantum Research",
+    text="© 2025 Scratch Researches",
     font=("Arial", 8),
     fg="gray"
 )
