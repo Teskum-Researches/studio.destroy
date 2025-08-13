@@ -185,6 +185,7 @@ def destroy_worker():
     password = password_entry.get()
     username = username_entry.get()
     logged = login(username, password)
+    log("Запуск...")
     if logged.get("success"):
         cookie = logged["cookie"]
         if isbanned(cookie):
