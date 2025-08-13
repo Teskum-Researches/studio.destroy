@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, UTC
 
 def login(username, password):
     session = requests.Session()
-    resp = session.get("https://scratch.mit.edu/csrf_token/")
+    session.get("https://scratch.mit.edu/csrf_token/")
     csrf_token = session.cookies.get('scratchcsrftoken')
     headers = {
         "referer": "https://scratch.mit.edu",
@@ -203,17 +203,20 @@ def destroy_worker():
                 log("Не удалось закрыть доступ к проектам, но ладно")
             log("Удаляем проекты!")
             removeprojects(cookie, studio)
+            log("Проекты удалены!")
             log("Удаляем себя!")
             removeuser(cookie, studio, username)
             log("Готово!")
         elif status == "curator":
             log("Аккаунт - куратор! Удаляем проекты")
             removeprojects(cookie, studio)
+            log("Готово")
         elif status == "invited":
             log("Аккаунт приглашён! Принимаем приглашение!")
             acceptinvite(cookie, studio)
-            log("Удаляем проекты!")
+            log("Аккаунт теперь куратор! Удаляем проекты!")
             removeprojects(cookie, studio)
+            log("Проекты удалены!")
         else:
             log("Аккаунт не приглашён в студию :(")
     else:
