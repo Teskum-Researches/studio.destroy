@@ -1,11 +1,13 @@
-import tkinter as tk
-from tkinter import scrolledtext
 import requests
 import time
 import re
 import threading
 from http.cookies import SimpleCookie
 from datetime import datetime, timedelta, UTC
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5 import uic
+
 
 
 def login(username, password):
@@ -225,71 +227,68 @@ def destroy_worker():
 
 
 def log(message):
-    def append():
-        log_area.config(state="normal")
-        log_area.insert(tk.END, str(message) + "\n")
-        log_area.see(tk.END)
-        log_area.config(state="disabled")
-    root.after(0, append)
+    window.listView.addItem(message)
+#    def append():
+#        log_area.config(state="normal")
+#        log_area.insert(tk.END, str(message) + "\n")
+#        log_area.see(tk.END)
+#        log_area.config(state="disabled")
+#    root.after(0, append)
 
+def log(a):
+    print(a)
 
-root = tk.Tk()
-root.title("Studio.Destroy()")
-root.geometry("500x300")
-root.resizable(False, False)
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('untitled.ui', self)
+        
+        self.setup_connections()
+    
+    def setup_connections(self):
+        self.pushButton.clicked.connect(self.on_button_click)
+        pass
+    
+    def on_button_click(self):
+        is_checked = self.checkBox.isChecked()
+        if is_checked:
+            deletemyself.set(1)
+        else:
+            deletemyself.set(0)
+        
+        username_entry.set(self.lineEdit.text())
+        password_entry.set(self.LineEdit_2.text())
+        studiotextbox.set(self.LineEdit_3.text())
+        destroy()
+    
 
-frame_auth = tk.Frame(root)
-frame_auth.pack(fill=tk.X, padx=10, pady=5)
-
-tk.Label(frame_auth, text="Имя пользователя:", font=("Arial", 10)).grid(row=0, column=0, sticky="w")
-username_entry = tk.Entry(frame_auth, font=("Arial", 12))
-username_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=2)
-
-tk.Label(frame_auth, text="Пароль:", font=("Arial", 10)).grid(row=1, column=0, sticky="w")
-password_entry = tk.Entry(frame_auth, font=("Arial", 12), show="●")
-password_entry.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
-
-frame_auth.columnconfigure(1, weight=1)
-
-studiotextbox = tk.Entry(root, font=("Arial", 14))
-studiotextbox.pack(fill=tk.X, padx=10, pady=10)
-
-button_frame = tk.Frame(root)
-button_frame.pack(fill=tk.X, padx=10, pady=5)
-
-btn_destroy = tk.Button(button_frame, text="Уничтожить!", bg="orange", fg="white", font=("Arial", 12), command=destroy)
-btn_destroy.pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=5)
-
-bottom_frame = tk.Frame(root)
-bottom_frame.pack(side="bottom", fill="x")
-
-# Копирайт внизу справа
-copyright_label = tk.Label(
-    bottom_frame,
-    text="© 2025 Scratch Researches",
-    font=("Arial", 8),
-    fg="gray"
-)
-copyright_label.pack(side="right", padx=5, pady=2)
-
-deletemyself = tk.IntVar()
-deletemyself_check = tk.Checkbutton(bottom_frame, text="Удалить себя из студии", variable=deletemyself)
-deletemyself_check.pack(side="left")
+def main():
+    global window
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())
+    
+    
+class fake_tk_entry:
+    def __init__(self):
+        self.value = ""
+    
+    def get(self):
+        return self.value
+    
+    def set(self, a):
+        self.value = a
+        
+        
+password_entry = fake_tk_entry()
+username_entry = fake_tk_entry()
+studiotextbox = fake_tk_entry()
+deletemyself = fake_tk_entry()
 deletemyself.set(1)
 
-
-# Поле для логов над копирайтом
-log_area = scrolledtext.ScrolledText(root, height=8, font=("Consolas", 10))
-log_area.pack(side="bottom", fill=tk.BOTH, padx=10, pady=(10, 0), expand=True)
-
-# Копирайт в правом нижнем углу
-copyright_label = tk.Label(
-    root,
-    text="© 2025 Quantum Research",
-    font=("Arial", 8),
-    fg="gray"
-)
-copyright_label.pack(side="bottom", anchor="e", padx=5, pady=2)
+if __name__ == '__main__':
+    main()
 
 
-root.mainloop()
+main()
