@@ -5,9 +5,12 @@ import threading
 from http.cookies import SimpleCookie
 from datetime import datetime, timedelta, UTC
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QAction, qApp, QMainWindow
 from PyQt5 import uic
 
+def log(message):
+    window.log.addItem(message)
+    window.log.scrollToBottom()
 
 def login(username, password):
     session = requests.Session()
@@ -177,9 +180,6 @@ def cookie_to_string(cookie):
     return morsel.OutputString()
 
 
-def destroy():
-    threading.Thread(target=destroy_worker, daemon=True).start()
-
 
 def destroy_worker():
     window.progressBar.setValue(0)
@@ -189,7 +189,7 @@ def destroy_worker():
     logged = login(username, password)
     cookie = logged["cookie"]
     log(f"Запуск... Удаляем студию {studio} с акканунта {username}")
-    if logged.get("success" and not isbanned(cookie)):
+    if logged.get("success"):
         status = getrights(cookie, studio)
         if status == "manager":
             log("Отлично! Аккаунт - менеджер! Начинаем уничтожение")
@@ -238,22 +238,25 @@ def destroy_worker():
         log("Акаунт забанен!")
 
 
-def log(message):
-    window.log.addItem(message)
+
+
+def destroy():
+    threading.Thread(target=destroy_worker, daemon=True).start()
 
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('gui.ui', self)
-        
+
         self.setup_connections()
     
     def setup_connections(self):
-        self.destroy_btn.clicked.connect(self.on_button_click)
+        self.destroy_btn.clicked.connect(self.destroy)
+        self.clear_logs_btn.triggered.connect(self.clear_logs)
         pass
-    
-    def on_button_click(self):
+
+    def destroy(self):
         is_checked = self.delete_myself_chbks.isChecked()
         if is_checked:
             deletemyself.set(1)
@@ -263,9 +266,11 @@ class MyWindow(QMainWindow):
         username_entry.set(self.username_line.text())
         password_entry.set(self.password_line.text())
         studiotextbox.set(self.studio_line.text())
-
         destroy()
+        
     
+    def clear_logs(self):
+        self.log.clear()
 
 def main():
     global window

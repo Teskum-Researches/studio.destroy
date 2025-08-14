@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>430</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,11 +25,11 @@
   <property name="maximumSize">
    <size>
     <width>600</width>
-    <height>430</height>
+    <height>450</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Studio.Destroy().v2</string>
+   <string>Studio.Destroy().v2.1</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QCheckBox" name="delete_myself_chbks">
@@ -100,33 +100,6 @@
      <enum>QLineEdit::Password</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="destroy_btn">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>580</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Segoe UI</family>
-     </font>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: orange; color: white;</string>
-    </property>
-    <property name="text">
-     <string>Уничтожить!</string>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="studio_line">
     <property name="geometry">
      <rect>
@@ -176,7 +149,50 @@
      <number>0</number>
     </property>
    </widget>
+   <widget class="QPushButton" name="destroy_btn">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>580</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Уничтожить!</string>
+    </property>
+   </widget>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="programm_menu">
+    <property name="title">
+     <string>Программа</string>
+    </property>
+    <addaction name="clear_logs_btn"/>
+   </widget>
+   <addaction name="programm_menu"/>
+  </widget>
+  <action name="get_cookie_btn">
+   <property name="text">
+    <string>Посмотреть куки</string>
+   </property>
+  </action>
+  <action name="clear_logs_btn">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Очистить логи</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
