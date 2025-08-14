@@ -183,47 +183,60 @@ def destroy():
 
 
 def destroy_worker():
+    window.progressBar.setValue(0)
     studio = int(re.findall(r'\d+', studiotextbox.get())[0])
     password = password_entry.get()
     username = username_entry.get()
     logged = login(username, password)
-    log("Запуск...")
-    if logged.get("success"):
-        cookie = logged["cookie"]
-        if isbanned(cookie):
-            log("Аккаунт забанен! Найдите другой.")
-            return
+    cookie = logged["cookie"]
+    log(f"Запуск... Удаляем студию {studio} с акканунта {username}")
+    if logged.get("success" and not isbanned(cookie)):
         status = getrights(cookie, studio)
         if status == "manager":
             log("Отлично! Аккаунт - менеджер! Начинаем уничтожение")
             log("Удаляем менеджеров!")
-            removemanagers(cookie, studio)
+            removemanagers(cookie, studio)                             #1
+            window.progressBar.setValue(20)
             log("Удаляем кураторов!")
-            removecurators(cookie, studio)
+            removecurators(cookie, studio)                             #2
+            window.progressBar.setValue(40)
             log("Закрываем доступ к проектам!")
-            if not closeprojects(cookie, studio):
+            if not closeprojects(cookie, studio):                             #3
                 log("Не удалось закрыть доступ к проектам, но ладно")
+            window.progressBar.setValue(60)
             log("Удаляем проекты!")
-            removeprojects(cookie, studio)
+            removeprojects(cookie, studio)                             #4
+            window.progressBar.setValue(80)
             log("Проекты удалены!")
             if deletemyself.get() == 1:
                 log("Удаляем себя!")
-                removeuser(cookie, studio, username)
+                removeuser(cookie, studio, username)                            #5
+            window.progressBar.setValue(100)
             log("Готово!")
         elif status == "curator":
             log("Аккаунт - куратор! Удаляем проекты")
             removeprojects(cookie, studio)
+            window.progressBar.setValue(50)
+            if deletemyself.get() == 1:
+                log("Удаляем себя!")
+                removeuser(cookie, studio, username)
+            window.progressBar.setValue(100)
             log("Готово")
         elif status == "invited":
             log("Аккаунт приглашён! Принимаем приглашение!")
             acceptinvite(cookie, studio)
+            window.progressBar.setValue(50)
             log("Аккаунт теперь куратор! Удаляем проекты!")
             removeprojects(cookie, studio)
+            window.progressBar.setValue(100)
             log("Проекты удалены!")
         else:
             log("Аккаунт не приглашён в студию :(")
-    else:
-        log("Ошибка входа: " + logged.get("msg", "неизвестная ошибка"))
+    elif not logged.get("success"):
+        log("Ошибка входа: " + logged.get("msg"))
+        window.progressBar.setValue(100)
+    elif isbanned(cookie):
+        log("Акаунт забанен!")
 
 
 def log(message):
