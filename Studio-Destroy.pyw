@@ -238,7 +238,7 @@ class MyWindow(QMainWindow):
         self.setup_connections()
     
     def setup_connections(self):
-        self.pushButton.clicked.connect(self.on_button_click)
+        self.destroy_btn.clicked.connect(self.on_button_click)
         pass
     
     def on_button_click(self):
@@ -248,12 +248,10 @@ class MyWindow(QMainWindow):
         else:
             deletemyself.set(0)
         
-        username_entry.set(self.lineEdit.text())
-        password_entry.set(self.lineEdit_2.text())
-        studiotextbox.set(self.lineEdit_3.text())
-        #print(username_entry.get())
-        #print(password_entry.get())
-        #print(studiotextbox.get())
+        username_entry.set(self.username_line.text())
+        password_entry.set(self.password_line.text())
+        studiotextbox.set(self.studio_line.text())
+
         destroy()
     
 
