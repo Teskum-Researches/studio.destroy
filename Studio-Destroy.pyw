@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
 
 
-
 def login(username, password):
     session = requests.Session()
     session.get("https://scratch.mit.edu/csrf_token/")
