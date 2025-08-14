@@ -6,21 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>390</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Studio.Destroy()</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="delete_myself_chbks">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
-      <width>151</width>
-      <height>21</height>
+      <y>370</y>
+      <width>171</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -30,17 +36,17 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="username_line">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>130</x>
       <y>20</y>
-      <width>421</width>
+      <width>461</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="username_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -53,7 +59,7 @@
      <string>Имя пользователя:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="password_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -66,22 +72,28 @@
      <string>Пароль:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="password_line">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>130</x>
       <y>50</y>
-      <width>421</width>
+      <width>461</width>
       <height>20</height>
      </rect>
     </property>
+    <property name="inputMask">
+     <string notr="true"/>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Password</enum>
+    </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="destroy_btn">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>110</y>
-      <width>531</width>
+      <width>580</width>
       <height>31</height>
      </rect>
     </property>
@@ -103,33 +115,23 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="studio_line">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>80</y>
-      <width>521</width>
+      <width>580</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QListView" name="listView">
+   <widget class="QLabel" name="copyright_label">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>531</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>340</y>
-      <width>141</width>
-      <height>31</height>
+      <x>420</x>
+      <y>370</y>
+      <width>181</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -139,8 +141,17 @@
      <string>© 2025 Scratch Researches</string>
     </property>
    </widget>
+   <widget class="QListWidget" name="log">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>580</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

@@ -227,21 +227,13 @@ def destroy_worker():
 
 
 def log(message):
-    window.listView.addItem(message)
-#    def append():
-#        log_area.config(state="normal")
-#        log_area.insert(tk.END, str(message) + "\n")
-#        log_area.see(tk.END)
-#        log_area.config(state="disabled")
-#    root.after(0, append)
+    window.log.addItem(message)
 
-def log(a):
-    print(a)
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('untitled.ui', self)
+        uic.loadUi('gui.ui', self)
         
         self.setup_connections()
     
@@ -250,15 +242,18 @@ class MyWindow(QMainWindow):
         pass
     
     def on_button_click(self):
-        is_checked = self.checkBox.isChecked()
+        is_checked = self.delete_myself_chbks.isChecked()
         if is_checked:
             deletemyself.set(1)
         else:
             deletemyself.set(0)
         
         username_entry.set(self.lineEdit.text())
-        password_entry.set(self.LineEdit_2.text())
-        studiotextbox.set(self.LineEdit_3.text())
+        password_entry.set(self.lineEdit_2.text())
+        studiotextbox.set(self.lineEdit_3.text())
+        #print(username_entry.get())
+        #print(password_entry.get())
+        #print(studiotextbox.get())
         destroy()
     
 
