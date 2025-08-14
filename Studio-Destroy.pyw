@@ -204,8 +204,9 @@ def destroy_worker():
             log("Удаляем проекты!")
             removeprojects(cookie, studio)
             log("Проекты удалены!")
-            log("Удаляем себя!")
-            removeuser(cookie, studio, username)
+            if deletemyself.get() == 1:
+                log("Удаляем себя!")
+                removeuser(cookie, studio, username)
             log("Готово!")
         elif status == "curator":
             log("Аккаунт - куратор! Удаляем проекты")
@@ -226,7 +227,7 @@ def destroy_worker():
 def log(message):
     def append():
         log_area.config(state="normal")
-        log_area.insert(tk.END, message + "\n")
+        log_area.insert(tk.END, str(message) + "\n")
         log_area.see(tk.END)
         log_area.config(state="disabled")
     root.after(0, append)
@@ -271,6 +272,12 @@ copyright_label = tk.Label(
 )
 copyright_label.pack(side="right", padx=5, pady=2)
 
+deletemyself = tk.IntVar()
+deletemyself_check = tk.Checkbutton(bottom_frame, text="Удалить себя из студии", variable=deletemyself)
+deletemyself_check.pack(side="left")
+deletemyself.set(1)
+
+
 # Поле для логов над копирайтом
 log_area = scrolledtext.ScrolledText(root, height=8, font=("Consolas", 10))
 log_area.pack(side="bottom", fill=tk.BOTH, padx=10, pady=(10, 0), expand=True)
@@ -283,5 +290,6 @@ copyright_label = tk.Label(
     fg="gray"
 )
 copyright_label.pack(side="bottom", anchor="e", padx=5, pady=2)
+
 
 root.mainloop()
