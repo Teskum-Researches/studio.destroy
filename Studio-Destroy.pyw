@@ -188,7 +188,7 @@ def destroy_worker():
     username = username_entry.get()
     logged = login(username, password)
     cookie = logged["cookie"]
-    log(f"Запуск... Удаляем студию {studio} с акканунта {username}")
+    log(f"Запуск... Удаляем студию {studio} с аккаунта {username}")
     if logged.get("success"):
         status = getrights(cookie, studio)
         if status == "manager":
