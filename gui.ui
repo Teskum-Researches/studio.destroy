@@ -123,7 +123,7 @@
      <string notr="true">opacity: 0;</string>
     </property>
     <property name="text">
-     <string>© 2025 Scratch Researches</string>
+     <string>© 2025 Teskum Researches</string>
     </property>
    </widget>
    <widget class="QListWidget" name="log">
