@@ -5,8 +5,8 @@ import threading
 from http.cookies import SimpleCookie
 from datetime import datetime, timedelta, UTC
 import sys
-from PyQt5.QtWidgets import QApplication, QAction, qApp, QMainWindow
-from PyQt5 import uic
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6 import uic
 
 def log(message):
     window.log.addItem(message)
@@ -277,7 +277,7 @@ def main():
     app = QApplication(sys.argv)
     window = Studio_Destroy()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
     
     
 class fake_tk_entry:
