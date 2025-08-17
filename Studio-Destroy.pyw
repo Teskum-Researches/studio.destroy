@@ -244,7 +244,7 @@ def destroy():
     threading.Thread(target=destroy_worker, daemon=True).start()
 
 
-class MyWindow(QMainWindow):
+class Studio_Destroy(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('gui.ui', self)
@@ -275,7 +275,7 @@ class MyWindow(QMainWindow):
 def main():
     global window
     app = QApplication(sys.argv)
-    window = MyWindow()
+    window = Studio_Destroy()
     window.show()
     sys.exit(app.exec_())
     
