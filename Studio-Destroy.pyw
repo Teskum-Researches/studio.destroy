@@ -211,7 +211,6 @@ def destroy_worker():
     password = window.password_input.text()
     username = window.username_input.text()
     logged = login(username, password)
-    #cookie = logged["cookie"]
     cookie = logged.get('cookie')
     log(f"Запуск... Удаляем студию {studio} с аккаунта {username}")
     
@@ -222,7 +221,6 @@ def destroy_worker():
             log("Отлично! Аккаунт - менеджер! Начинаем уничтожение")
             log("Удаляем менеджеров!")
             removemanagers(cookie, studio)
-
             log("Удаляем кураторов!")
             removecurators(cookie, studio)
             window.progress_bar.setValue(40)
@@ -250,7 +248,7 @@ def destroy_worker():
             removeprojects(cookie, studio)
             log("Проекты удалены!")
         else:
-            log("Аккаунт не приглашён в студию :(")
+            log("Аккаунта нету в студии, и он даже не приглашён :(")
     elif not logged.get("success"):
         log("Ошибка входа: " + logged.get("msg"))
     elif isbanned(cookie):
@@ -266,8 +264,6 @@ def destroy():
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        #uic.loadUi('gui.ui', self)
-
         self.setWindowTitle('Studio.Destroy().v3')
         self.setGeometry(100, 100, 600, 480)
         self.setFixedSize(600, 480)
@@ -287,19 +283,13 @@ class MainWindow(QWidget):
         self.delete_myself = QCheckBox("Удалить себя")
 
         self.destroy_btn = QPushButton('Уничтожить')
-        #self.cancel_btn = QPushButton('Отмена')
-        #self.cancel_btn.setEnabled(False)
         
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
-        
-        self.worker_thread = None
-        self.worker = None
 
         # Layout для кнопок
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.destroy_btn)
-        #button_layout.addWidget(self.cancel_btn)
 
         layout = QVBoxLayout()
         layout.addWidget(self.username_input)
@@ -315,13 +305,11 @@ class MainWindow(QWidget):
 
         self.setLayout(layout)
         self.destroy_btn.clicked.connect(destroy)
-        #self.cancel_btn.clicked.connect(self.cancel_restore)
 
         self.setup_connections()
     
     def setup_connections(self):
         self.destroy_btn.clicked.connect(self.destroy)
-        #self.clear_logs_btn.triggered.connect(self.clear_logs)
         pass
         
 
