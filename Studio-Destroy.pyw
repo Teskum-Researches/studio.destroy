@@ -5,12 +5,14 @@ import threading
 from http.cookies import SimpleCookie
 from datetime import datetime, timedelta, UTC
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6 import uic
+
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, 
+                            QLineEdit, QListWidget, QLabel, QProgressBar, 
+                            QHBoxLayout, QCheckBox)
 
 def log(message):
-    window.log.addItem(message)
-    window.log.scrollToBottom()
+    window.logs.addItem(message)
+    window.logs.scrollToBottom()
 
 def login(username, password):
     session = requests.Session()
@@ -68,6 +70,8 @@ def isbanned(cookie):
 
 
 def getrights(cookie, studio):
+    global total_percents
+
     resp = requests.get("https://scratch.mit.edu/session/", headers=cookie)
     r = resp.json()
     resp = requests.get(
@@ -75,14 +79,25 @@ def getrights(cookie, studio):
         headers={"X-Token": r['user']['token']}
     )
     r = resp.json()
+    projects = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/projects/?limit=40").json())
     if r.get("manager"):
+        managers = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/managers?limit=40&offset=1").json())
+        curators = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/curators?limit=40").json())
+        projects = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/projects/?limit=40").json())
+        total_percents = 100 / (projects + curators + managers)
         return "manager"
     elif r.get("curator"):
+        projects = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/projects/?limit=40").json())
+        total_percents = 100 / (projects)
         return "curator"
     elif r.get("invited"):
+        projects = len(requests.get(f"https://api.scratch.mit.edu/studios/{str(studio)}/projects/?limit=40").json())
+        total_percents = 100 / (projects)
         return "invited"
     else:
         return "-"
+    
+    
 
 
 def removeuser(cookie, studio, user):
@@ -103,6 +118,7 @@ def removecurators(cookie, studio):
         for curator in curators:
             if not removeuser(cookie, studio, curator["username"]):
                 log(f"Произошла ошибка при удалении {curator['username']}")
+            window.progress_bar.setValue(window.progress_bar.value() + round(total_percents))
             time.sleep(0.5)
 
 
@@ -128,6 +144,9 @@ def removeprojects(cookie, studio):
                 f"https://api.scratch.mit.edu/studios/{studio}/project/{p.get('id')}/",
                 headers={"X-Token": token}
             )
+
+            window.progress_bar.setValue(window.progress_bar.value() + round(total_percents))
+
             if r.status_code not in (200, 204):
                 log(f"Ошибка {str(r.status_code)} при удалении проекта")
                 time.sleep(10)
@@ -157,6 +176,7 @@ def removemanagers(cookie, studio):
         if user["username"] != myusername:
             if not removeuser(cookie, studio, user["username"]):
                 log(f"Произошла ошибка при удалении {user['username']}")
+            window.progress_bar.setValue(window.progress_bar.value() + round(total_percents))
             time.sleep(0.5)
 
 
@@ -182,58 +202,57 @@ def cookie_to_string(cookie):
 
 
 def destroy_worker():
-    window.progressBar.setValue(0)
-    studio = int(re.findall(r'\d+', studiotextbox.get())[0])
-    password = password_entry.get()
-    username = username_entry.get()
+    studio = int(re.findall(r'\d+', window.studio_input.text())[0])
+
+    
+
+
+    window.progress_bar.setValue(0)
+    password = window.password_input.text()
+    username = window.username_input.text()
     logged = login(username, password)
-    cookie = logged["cookie"]
+    #cookie = logged["cookie"]
+    cookie = logged.get('cookie')
     log(f"Запуск... Удаляем студию {studio} с аккаунта {username}")
+    
+
     if logged.get("success"):
         status = getrights(cookie, studio)
         if status == "manager":
             log("Отлично! Аккаунт - менеджер! Начинаем уничтожение")
             log("Удаляем менеджеров!")
-            removemanagers(cookie, studio)                             #1
-            window.progressBar.setValue(20)
+            removemanagers(cookie, studio)
+
             log("Удаляем кураторов!")
-            removecurators(cookie, studio)                             #2
-            window.progressBar.setValue(40)
+            removecurators(cookie, studio)
+            window.progress_bar.setValue(40)
             log("Закрываем доступ к проектам!")
-            if not closeprojects(cookie, studio):                             #3
+            if not closeprojects(cookie, studio):
                 log("Не удалось закрыть доступ к проектам, но ладно")
-            window.progressBar.setValue(60)
             log("Удаляем проекты!")
-            removeprojects(cookie, studio)                             #4
-            window.progressBar.setValue(80)
+            removeprojects(cookie, studio)
             log("Проекты удалены!")
-            if deletemyself.get() == 1:
+            if window.delete_myself.isChecked():
                 log("Удаляем себя!")
-                removeuser(cookie, studio, username)                            #5
-            window.progressBar.setValue(100)
+                removeuser(cookie, studio, username)
             log("Готово!")
         elif status == "curator":
             log("Аккаунт - куратор! Удаляем проекты")
             removeprojects(cookie, studio)
-            window.progressBar.setValue(50)
-            if deletemyself.get() == 1:
+            if  window.delete_myself.isChecked():
                 log("Удаляем себя!")
                 removeuser(cookie, studio, username)
-            window.progressBar.setValue(100)
             log("Готово")
         elif status == "invited":
             log("Аккаунт приглашён! Принимаем приглашение!")
             acceptinvite(cookie, studio)
-            window.progressBar.setValue(50)
             log("Аккаунт теперь куратор! Удаляем проекты!")
             removeprojects(cookie, studio)
-            window.progressBar.setValue(100)
             log("Проекты удалены!")
         else:
             log("Аккаунт не приглашён в студию :(")
     elif not logged.get("success"):
         log("Ошибка входа: " + logged.get("msg"))
-        window.progressBar.setValue(100)
     elif isbanned(cookie):
         log("Акаунт забанен!")
 
@@ -244,61 +263,76 @@ def destroy():
     threading.Thread(target=destroy_worker, daemon=True).start()
 
 
-class Studio_Destroy(QMainWindow):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi('gui.ui', self)
+        #uic.loadUi('gui.ui', self)
+
+        self.setWindowTitle('Studio.Destroy().v3')
+        self.setGeometry(100, 100, 600, 480)
+        self.setFixedSize(600, 480)
+
+        self.username_input = QLineEdit()
+        self.username_input.setPlaceholderText('Ник')
+
+        self.password_input = QLineEdit()
+        self.password_input.setPlaceholderText('Пароль')
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.studio_input = QLineEdit()
+        self.studio_input.setPlaceholderText('ID или ссылка студии')
+
+        self.logs = QListWidget()
+        self.copyright_label = QLabel("© 2025 Teskum Researches")
+        self.delete_myself = QCheckBox("Удалить себя")
+
+        self.destroy_btn = QPushButton('Уничтожить')
+        #self.cancel_btn = QPushButton('Отмена')
+        #self.cancel_btn.setEnabled(False)
+        
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setValue(0)
+        
+        self.worker_thread = None
+        self.worker = None
+
+        # Layout для кнопок
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.destroy_btn)
+        #button_layout.addWidget(self.cancel_btn)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.username_input)
+        layout.addWidget(self.password_input)
+        layout.addWidget(self.studio_input)
+        layout.addLayout(button_layout)
+        layout.addWidget(self.logs)
+        layout.addWidget(self.progress_bar)
+        layout.addWidget(self.delete_myself)
+        layout.addWidget(self.copyright_label)
+        
+        
+
+        self.setLayout(layout)
+        self.destroy_btn.clicked.connect(destroy)
+        #self.cancel_btn.clicked.connect(self.cancel_restore)
 
         self.setup_connections()
     
     def setup_connections(self):
         self.destroy_btn.clicked.connect(self.destroy)
-        self.clear_logs_btn.triggered.connect(self.clear_logs)
+        #self.clear_logs_btn.triggered.connect(self.clear_logs)
         pass
-
-    def destroy(self):
-        is_checked = self.delete_myself_chbks.isChecked()
-        if is_checked:
-            deletemyself.set(1)
-        else:
-            deletemyself.set(0)
         
-        username_entry.set(self.username_line.text())
-        password_entry.set(self.password_line.text())
-        studiotextbox.set(self.studio_line.text())
-        destroy()
-        
-    
-    def clear_logs(self):
-        self.log.clear()
 
 def main():
     global window
     app = QApplication(sys.argv)
-    window = Studio_Destroy()
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())
     
-    
-class fake_tk_entry:
-    def __init__(self):
-        self.value = ""
-    
-    def get(self):
-        return self.value
-    
-    def set(self, a):
-        self.value = a
-        
-        
-password_entry = fake_tk_entry()
-username_entry = fake_tk_entry()
-studiotextbox = fake_tk_entry()
-deletemyself = fake_tk_entry()
-deletemyself.set(1)
+
 
 if __name__ == '__main__':
     main()
-
-
-main()
