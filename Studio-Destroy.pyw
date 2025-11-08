@@ -291,9 +291,14 @@ class MainWindow(QWidget):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.destroy_btn)
 
+        # Layout для данных акаунта
+
+        data_layout = QHBoxLayout()
+        data_layout.addWidget(self.username_input)
+        data_layout.addWidget(self.password_input)
+
         layout = QVBoxLayout()
-        layout.addWidget(self.username_input)
-        layout.addWidget(self.password_input)
+        layout.addLayout(data_layout)
         layout.addWidget(self.studio_input)
         layout.addLayout(button_layout)
         layout.addWidget(self.logs)
