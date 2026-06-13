@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "studio-destroy"
+version = "3.0.0"
+description = "Studio.Destroy() — программа для сноса студий в Scratch."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "PyQt6",
+    "requests",
+]
+license = { file = "LICENSE" }
+authors = [
+    { name = "gervaty" },
+    { name = "polzovatel_5555" },
+    { name = "myxa"},
+]
+
+[tool.setuptools]
+scripts = ["src/Studio-Destroy.pyw"]

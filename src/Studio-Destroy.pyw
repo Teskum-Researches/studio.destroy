@@ -280,7 +280,7 @@ class MainWindow(QWidget):
         self.studio_input.setPlaceholderText('ID или ссылка студии')
 
         self.logs = QListWidget()
-        self.copyright_label = QLabel("© 2025 Teskum Researches")
+        self.copyright_label = QLabel("© 2026 Teskum Researches")
         self.delete_myself = QCheckBox("Удалить себя")
 
         self.destroy_btn = QPushButton('Уничтожить')
